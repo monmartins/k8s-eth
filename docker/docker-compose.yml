@@ -1,0 +1,64 @@
+version: '3.5'
+
+volumes:
+    exclude:
+
+services:
+  ethereum:
+    container_name: ethereum-dev
+    image: ethereum-go-1-14-4:alpine-3.8
+    tty: true
+    stdin_open: true
+    volumes:
+      - ../eth/config:/home/dev/ethereum-config
+    working_dir: /home/dev/
+    command: '/bin/sh /home/dev/ethereum-config/scripts/init.sh'
+    environment:
+      - ACCOUNT_PASSWORD=$ACCOUNT_PASSWORD
+      - NETWORK_ID=2745
+      - BOOTNODE_FOLDER=/home/dev/ethereum-config/bootnode
+      - ETH_FOLDER=/home/dev/eth
+      - GENESIS_FILE=/home/dev/ethereum-config/genesis.json
+      - GENESIS_FILE_TEMPLATE=/home/dev/ethereum-config/genesis-template.json
+      - BACKUP_FOLDER=/home/dev/ethereum-config/backup
+      - SCRIPT_FOLDER=/home/dev/ethereum-config/scripts
+      - DAG_FOLDER=/root/eth-cache
+    ports:
+      - 8009:8009
+      - 8545:8545 
+      - 8546:8546 
+      - 8547:8547 
+      - 30303:30303 
+      - 30303:30303/udp 
+    networks:
+      - ethereum_private
+      
+
+  nodejs:
+    container_name: nodejs
+    image: nodejs-14:alpine-310
+    tty: true
+    stdin_open: true
+    working_dir: /home/dev
+    command: node server.js 1> /var/log/app 2> /var/log/app2
+    depends_on: 
+      - ethereum
+    environment:
+      - ACCOUNT_PASSWORD=$ACCOUNT_PASSWORD
+      - SECRET=$SECRET
+      - CONTRACT_EXIST=$CONTRACT_EXIST
+      - CONTRACT_ADRESS=$CONTRACT_ADRESS
+      - WORKING_DIR=/home/dev
+    volumes:
+      - ../app:/home/dev
+      - ../eth/smartcontract:/home/dev/contracts
+      - ../eth/config:/home/dev/ethereum-config
+      - exclude:/home/dev/node_modules
+    ports:
+      - 8000:8000
+    networks:
+      - ethereum_private
+        
+  
+networks:
+  ethereum_private:

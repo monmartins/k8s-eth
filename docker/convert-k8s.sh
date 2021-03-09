@@ -1,0 +1,1 @@
+kompose convert -f docker-compose.yml --volumes hostPath --out ../k8s/k8s.yaml 
