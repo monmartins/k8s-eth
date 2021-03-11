@@ -50,8 +50,9 @@ minikube start
 # minikube kubectl -- get po -A
 alias kubectl='minikube kubectl --'
 source <(kubectl completion bash) # configuração de autocomplete no bash do shell atual, o pacote bash-completion precisa ter sido instalado primeiro.
+echo "alias kubectl='minikube kubectl --'" >> ~/.bashrc
 echo "source <(kubectl completion bash)" >> ~/.bashrc
- kubectl get pods --all-namespace
+ kubectl get pods
  
 
 # Kompose

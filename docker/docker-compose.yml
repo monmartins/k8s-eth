@@ -33,7 +33,6 @@ services:
     networks:
       - ethereum_private
       
-
   nodejs:
     container_name: nodejs
     image: nodejs-14:alpine-310
